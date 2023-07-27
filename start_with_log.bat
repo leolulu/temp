@@ -1,0 +1,1 @@
+./daily_start.bat > daily_stock.log

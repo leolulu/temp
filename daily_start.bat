@@ -2,33 +2,33 @@
 
 setlocal enabledelayedexpansion
 
-REM ç”Ÿæˆæœ‰æ•ˆæ—¥æœŸåˆ—è¡¨æ–‡ä»¶
-echo å¼€å§‹ç”Ÿæˆæ—¥æœŸæ–‡ä»¶...
+REM Éú³ÉÓĞĞ§ÈÕÆÚÁĞ±íÎÄ¼ş
+echo ¿ªÊ¼Éú³ÉÈÕÆÚÎÄ¼ş...
 del %FIRST_TWO_WORKDAYS_JSON_PATH%
 del %ALL_DAYS_INFO_JSON_PATH%
 powershell -ExecutionPolicy Bypass -File .\fetch_dates.ps1
 
 
-REM å¤§æ™ºæ…§é€‰è‚¡éƒ¨åˆ†â†“
+REM ´óÖÇ»ÛÑ¡¹É²¿·Ö¡ı
 set maxRetries=5
 set retries=0
 set success=false
 
 :retrySikulix
-echo å…³é—­å¤§æ™ºæ…§è¿›ç¨‹...
+echo ¹Ø±Õ´óÖÇ»Û½ø³Ì...
 taskkill /F /IM dzh2.exe /T
 
-echo å¯åŠ¨å¤§æ™ºæ…§...
+echo Æô¶¯´óÖÇ»Û...
 start /D C:\daily_stock\dzh365_2 DZHTool.exe
 ping 127.0.0.1 -n 30 > nul
 cd /d C:\daily_stock\sikuli
 
 REM Start the java command in a new window with a unique title
-echo å¯åŠ¨SikulixJobå­çª—å£...
+echo Æô¶¯SikulixJob×Ó´°¿Ú...
 start "SikulixJob" cmd /c "echo 1 > java_sikuli_errorlevel.txt & set java_sikuli_errorlevel_path=%CD%\java_sikuli_errorlevel.txt & java -jar sikulix.jar -r allinone_stock_after_4pm.sikuli > sikuli.log"
 
 REM Start a delayed task in the background that will kill the java command after 30 minutes
-echo å¯åŠ¨TimeoutJobå­çª—å£...
+echo Æô¶¯TimeoutJob×Ó´°¿Ú...
 start "TimeoutJob" cmd /c "ping 127.0.0.1 -n 1800 > nul && taskkill /F /FI "WindowTitle eq SikulixJob" /T"
 
 :checkSikulix
@@ -36,7 +36,7 @@ REM Check if the SikulixJob is still running every minute
 tasklist /FI "WindowTitle eq SikulixJob" | findstr /i "cmd.exe" > nul
 if errorlevel 1 (
     REM The job has finished
-    echo æ£€æµ‹åˆ°SikulixJobçª—å£å·²å…³é—­...
+    echo ¼ì²âµ½SikulixJob´°¿ÚÒÑ¹Ø±Õ...
     
     REM Read the errorlevel from the temporary file
     set /p sikulixErrorlevel=<java_sikuli_errorlevel.txt
@@ -44,49 +44,49 @@ if errorlevel 1 (
 	for /f "tokens=* delims= " %%a in ("!sikulixErrorlevel!") do set "sikulixErrorlevel=%%a"
 	for /f "tokens=* delims= " %%a in ("!sikulixErrorlevel:~0,-1!") do set "sikulixErrorlevel=%%a"
 	
-	echo é€šè¿‡æ£€æµ‹æ–‡ä»¶ï¼Œæ–‡ä»¶ä¸­sikulixErrorlevelçš„å€¼ä¸ºï¼š
+	echo Í¨¹ı¼ì²âÎÄ¼ş£¬ÎÄ¼şÖĞsikulixErrorlevelµÄÖµÎª£º
 	echo !sikulixErrorlevel!
     if !sikulixErrorlevel! equ 0 (
-	    echo sikuliæ£€æµ‹ç»“æœæ­£å¸¸ï¼Œè®¾ç½®sucessä¸ºtrue...
+	    echo sikuli¼ì²â½á¹ûÕı³££¬ÉèÖÃsucessÎªtrue...
         set success=true
     )
 ) else (
-    echo SikulixJobæ­£åœ¨è¿è¡Œä¸­ï¼Œç­‰å¾…å…­åç§’...
+    echo SikulixJobÕıÔÚÔËĞĞÖĞ£¬µÈ´ıÁùÊ®Ãë...
     ping 127.0.0.1 -n 60 > nul
     goto :checkSikulix
 )
 
 REM Kill the timeout job (if it's still running)
-echo å…³é—­å·²ç»æ²¡æœ‰ç”¨çš„TimeoutJob...
+echo ¹Ø±ÕÒÑ¾­Ã»ÓĞÓÃµÄTimeoutJob...
 taskkill /F /FI "WindowTitle eq TimeoutJob" /T
 
-echo è®¤ä¸ºå¤§æ™ºæ…§é˜¶æ®µå·²ç»“æŸï¼Œæœ€ç»ˆsucessçŠ¶æ€ä¸ºï¼š
+echo ÈÏÎª´óÖÇ»Û½×¶ÎÒÑ½áÊø£¬×îÖÕsucess×´Ì¬Îª£º
 echo %success%
 if %success% == true (
-    echo å¤§æ™ºæ…§è¿è¡Œç»“æœcheck1é€šè¿‡...
+    echo ´óÖÇ»ÛÔËĞĞ½á¹ûcheck1Í¨¹ı...
 ) else (
     set /a retries+=1
-	echo å¤§æ™ºæ…§é˜¶æ®µè¿è¡ŒçŠ¶æ€ä¸æ­£å¸¸ï¼Œå‡†å¤‡å¼€å§‹é‡è¯•ï¼Œå½“å‰é‡è¯•æ¬¡æ•°ä¸ºï¼š
+	echo ´óÖÇ»Û½×¶ÎÔËĞĞ×´Ì¬²»Õı³££¬×¼±¸¿ªÊ¼ÖØÊÔ£¬µ±Ç°ÖØÊÔ´ÎÊıÎª£º
 	echo !retries!
     if !retries! lss %maxRetries% (
         goto :retrySikulix
     )
 )
 if %success% == true (
-    echo å¤§æ™ºæ…§è¿è¡Œç»“æœcheck2é€šè¿‡...
+    echo ´óÖÇ»ÛÔËĞĞ½á¹ûcheck2Í¨¹ı...
 ) else (
-    echo å¤§æ™ºæ…§é˜¶æ®µè¿è¡Œå¤±è´¥ï¼Œå·²è¾¾åˆ°æœ€å¤§é‡è¯•æ¬¡æ•°...
+    echo ´óÖÇ»Û½×¶ÎÔËĞĞÊ§°Ü£¬ÒÑ´ïµ½×î´óÖØÊÔ´ÎÊı...
     goto :skip_code
 )
-echo å¤§æ™ºæ…§é˜¶æ®µè¿è¡ŒæˆåŠŸ...
+echo ´óÖÇ»Û½×¶ÎÔËĞĞ³É¹¦...
 
 
-REM OCRè¯†åˆ«éƒ¨åˆ†
+REM OCRÊ¶±ğ²¿·Ö
 for /f "tokens=1 delims=:" %%a in ("%time%") do set currentHour=%%a
 set /a currentHour=1%currentHour%-100
 if %currentHour% geq 13 (
     if %currentHour% lss 16 (
-        echo 13ç‚¹åˆ°16ç‚¹ä¹‹é—´ï¼Œè·³è¿‡æ‰§è¡Œä»£ç 
+        echo 13µãµ½16µãÖ®¼ä£¬Ìø¹ıÖ´ĞĞ´úÂë
         goto :skip_code
     )
 )
@@ -94,5 +94,5 @@ ping 127.0.0.1 -n 10 > nul
 start python "C:\daily_stock\screenshot_ocr.py" >> sikuli.log
 
 
-REM ç»“æŸéƒ¨åˆ†
+REM ½áÊø²¿·Ö
 :skip_code

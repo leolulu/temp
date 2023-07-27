@@ -25,7 +25,7 @@ cd /d C:\daily_stock\sikuli
 
 REM Start the java command in a new window with a unique title
 echo 启动SikulixJob子窗口...
-start "SikulixJob" cmd /c "echo 1 > java_sikuli_errorlevel.txt & java -jar sikulix.jar -r allinone_stock_after_4pm.sikuli > sikuli.log & echo %errorlevel% > java_sikuli_errorlevel.txt"
+start "SikulixJob" cmd /c "echo 1 > java_sikuli_errorlevel.txt & set java_sikuli_errorlevel_path=%CD%\java_sikuli_errorlevel.txt & java -jar sikulix.jar -r allinone_stock_after_4pm.sikuli > sikuli.log"
 
 REM Start a delayed task in the background that will kill the java command after 30 minutes
 echo 启动TimeoutJob子窗口...
